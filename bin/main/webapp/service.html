@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="demo.css">
+    <link rel="stylesheet" type="text/css" href="css/button.css">
+    <script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/service.js"></script>
+    <script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body onload="getService()">
+	<table id="dg" singleSelect="true"  nowrap="false" fitColumns="true" title="服务管理" data-options="toolbar:toolbar"></table>
+	    
+    <!-- 弹出框 -->
+    <div id="w" class="easyui-window" title="新增服务" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:400px;height:330px;padding:10px;">
+        <form id="frmService" method="post">
+            <table>
+                <tr>
+                    <td></td>
+                    <td><input class="easyui-validatebox" type="hidden" name="id" data-options="required:false" style="width:270px;"></input></td>
+                </tr>            
+                <tr>
+                    <td>名称:</td>
+                    <td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" style="width:270px;"></input></td>
+                </tr>
+                <tr>
+                    <td>功能:</td>
+                    <td>
+                    <select class="easyui-combobox" name="code" style="width:273px">
+                        <option value="message">消息中间件</option>
+                        <option value="check">检查服务器</option>
+                    </select>                    
+                    </td>
+                </tr>                
+                <tr>
+                    <td>ip:</td>
+                    <td><input class="easyui-validatebox" type="text" name="ip" data-options="required:true" style="width:270px;"></td>
+                </tr>
+                <tr>
+                    <td>端口:</td>
+                    <td><input class="easyui-numberbox" type="text" name="port" data-options="required:true" style="width:270px;"></input></td>
+                </tr>
+                <tr>
+                    <td>URL:</td>
+                    <td><input class="easyui-validatebox" type="text" name="url" data-options="required:true" style="width:270px;"></input></td>
+                </tr> 
+                <tr>
+                    <td>用户名:</td>
+                    <td><input class="easyui-validatebox" type="text" name="acName" data-options="required:true" style="width:270px;"></input></td>
+                </tr> 
+                <tr>
+                    <td>密码:</td>
+                    <td><input class="easyui-validatebox" type="text" name="acPwd" data-options="required:true" style="width:270px;"></input></td>
+                </tr>                                                
+                <tr>
+                    <td>状态:</td>
+                    <td>
+                    <select class="easyui-combobox" name="status" style="width:273px;">
+                        <option value="1">启用</option>
+                        <option value="0">停用</option>
+                    </select>                    
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><a href="#" onclick="addService()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+                    <a href="#" class="easyui-linkbutton" onclick="closeW()" data-options="iconCls:'icon-cancel'">关闭</a></td>
+                </tr>                                                               
+            </table>
+        </form>
+    </div>
+</body>
+</html>

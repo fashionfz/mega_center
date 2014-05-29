@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="themes/icon.css">
+<link rel="stylesheet" type="text/css" href="demo.css">
+<link rel="stylesheet" type="text/css" href="css/button.css">
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/menus.js"></script>
+<script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body onload="getMenu()">
+	<table id="dg" singleSelect="true" nowrap="false" fitColumns="true"
+		title="菜单管理"></table>
+
+
+	<!-- 弹出框 -->
+	<div id="w" class="easyui-window" title="新增菜单"
+		data-options="modal:true,closed:true,iconCls:'icon-save'"
+		style="width: 370px; height: 220px; padding: 10px;">
+		<form id="frmMenu" method="post">
+			<table>
+				<tr>
+					<td></td>
+					<td><input class="easyui-validatebox" type="hidden" name="id"
+						data-options="required:false" style="width: 270px;"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>名称:</td>
+					<td><input class="easyui-validatebox" type="text" name="name"
+						data-options="required:true" style="width: 270px;"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>图标:</td>
+					<td><input class="easyui-validatebox" type="text" name="icon"
+						style="width: 270px;"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>URL:</td>
+					<td><input class="easyui-validatebox" type="text" name="url"
+						data-options="required:true" style="width: 270px;"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>状态:</td>
+					<td><select class="easyui-combobox" name="status"
+						style="width: 273px;">
+							<option value="1">启用</option>
+							<option value="0">停用</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center"><a href="#" onclick="addMenu()"
+						class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+						<a href="#" class="easyui-linkbutton" onclick="closeW()"
+						data-options="iconCls:'icon-cancel'">关闭</a>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+</html>

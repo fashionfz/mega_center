@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>检测报告</title>
+	<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="css/button.css">	
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<style type="text/css">
+	.myDiv {   
+    background:#FFFEE6;
+}
+
+.td1{ 
+    background-color:Silver;
+    border: 1px solid #C1DAD7;   
+    padding: 0px 0px 0px 0px;
+}    
+
+.mytable {   
+    padding: 0;
+    margin: 0;   
+    border-collapse:collapse;
+    text-align:center;
+}
+
+.mytable2 {   
+    padding: 0;
+    margin: 0;   
+    border-collapse:collapse;
+    cursor:crosshair;
+}
+
+.td2 {
+    border: 1px solid #C1DAD7;   
+    background: #fff;
+    padding: 0px 0px 0px 0px;
+}
+
+</style>
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="jquery.easyui.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="js/device.js" charset="utf-8"></script>
+	<script type="text/javascript" src="locale/easyui-lang-zh_CN.js"  charset="utf-8"></script>  
+</head>
+<body onload="query()" onmouseup="end()">
+    <div class="easyui-panel" title="查询条件" style="overflow:auto;padding:0px">
+        <div style="padding:10px 0 10px 60px;text-align:center">
+        <form id="frmQuery" method="post">
+            <table style="width:95%">
+                <tr>
+                    <td style="width:10%">DVR名称:</td>
+                    <td style="width:40%"><input class="easyui-validatebox" type="text" name="dvrName" style="width:100%"></input></td>
+                    <td style="width:10%">DVR-ip:</td>
+                    <td style="width:40%"><input class="easyui-validatebox" type="text" name="dvrIp" style="width:100%"></input></td>                    
+                </tr>
+                <tr>
+                    <td>DVR用户名:</td>
+                    <td><input class="easyui-validatebox" type="text" name="dvrUserName" style="width:100%"></input></td>
+                    <td>DVR密码:</td>
+                    <td><input class="easyui-validatebox" type="text" name="dvrPassword" style="width:100%"></input></td>                   
+                </tr>
+                <tr>
+                    <td>类型:</td>
+                    <td><input class="easyui-validatebox" type="text" name="type" style="width:100%"></input></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>                   
+                </tr>                
+            </table>
+        </form>
+        </div>
+        <div style="text-align:center;padding:5px">
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="query()">查  询</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="addDevice()">添  加</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-redo'" onclick="execlIn()">导入</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo'" onclick="execlLoad()">导出</a>
+        </div>
+    </div>
+	
+
+        <div title="设备列表" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:0px">
+	        <table id="dg" style="height:380px" singleSelect="true"  nowrap="false" fitColumns="true" title="设备列表">
+	        </table>
+        </div>  
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- 弹出框 -->
+    <div id="w" class="easyui-window" title="新增设备" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:400px;height:370px;padding:10px;">
+        <form id="frmDevice" method="post">
+            <table>
+                <tr>
+                    <td></td>
+                    <td><input class="easyui-validatebox" type="hidden" name="id" data-options="required:false" style="width:270px;"></input></td>
+                </tr>               
+                <tr>
+                    <td>摄像头名称:</td>
+                    <td><input class="easyui-validatebox" type="text" name="vicName" data-options="required:true" style="width:270px;"></input></td>
+                </tr>
+                <tr>
+                    <td>DVR名称:</td>
+                    <td><input class="easyui-validatebox" type="text" name="dvrName" data-options="required:true" style="width:270px;"></input></td>
+                </tr>                
+                <tr>
+                    <td>DVR-ip:</td>
+                    <td><input class="easyui-validatebox" type="text" name="dvrIp" data-options="required:true" style="width:270px;"></input></td>
+                </tr> 
+                <tr>
+                    <td>DVR-port:</td>
+                    <td><input class="easyui-validatebox" type="text" name="dvrPort" data-options="required:true" style="width:270px;"></input></td>
+                </tr>                               
+                <tr>
+                    <td>DVR用户名:</td>
+                    <td><input class="easyui-validatebox" type="text" name="dvrUserName" data-options="required:true" style="width:270px;"></input></td>
+                </tr>
+                <tr>
+                    <td>DVR密码:</td>
+                    <td><input class="easyui-validatebox" type="text" name="dvrPassword" data-options="required:true" style="width:270px;"></input></td>
+                </tr>  
+                <tr>
+                    <td>通道:</td>
+                    <td><input class="easyui-validatebox" type="text" name="channel" data-options="required:true" style="width:270px;"></input></td>
+                </tr>  
+                <tr>
+                    <td>本地存储周期:</td>
+                    <td><input class="easyui-validatebox" type="text" name="recordCycle" style="width:270px;"></input></td>
+                </tr>  
+                <tr>
+                    <td>中心存储周期:</td>
+                    <td><input class="easyui-validatebox" type="text" name="recordCycleRemote" style="width:270px;"></input></td>
+                </tr>                                                              
+                <tr>
+                    <td>安装位置:</td>
+                    <td><select class="easyui-combobox" name="vicType" style="width:273px;">
+                            <option value="-1">请选择</option>
+                            <option value="1">大厅</option>
+                            <option value="2">加钞间</option>
+                            <option value="3">ATM环境</option>
+                            <option value="4">营业区环境</option>
+                            <option value="5">柜员</option>
+                        </select>
+                    </td>
+                </tr>                             
+                <tr>
+                    <td colspan="2" align="center"><a href="#" onclick="saveDevice()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+                    <a href="#" class="easyui-linkbutton" onclick="closeW()" data-options="iconCls:'icon-cancel'">关闭</a></td>
+                </tr>                  
+            </table>
+        </form>
+    </div>
+    
+    
+    
+        <!-- 弹出框 -->
+    <div id="w2" class="easyui-window" title="存储策略" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:800px;height:420px;padding:10px;">
+	    <table  class="mytable">
+	       <tr height="40px"><td width="100px"></td><td width="40px">1</td><td width="40px">2</td><td width="40px">3</td>
+	       <td width="40px">4</td><td width="40px">5</td><td width="40px">6
+	       </td><td width="40px">7</td><td width="40px">8</td><td width="40px">9</td>
+	       <td width="40px">10</td><td width="40px">11</td><td width="40px">12</td>
+	       <td width="40px">13</td><td width="40px">14</td><td width="40px">15</td>
+	       <td width="40px">16</td><td width="40px">17</td><td width="40px">18</td>
+	       <td width="40px">19</td><td width="40px">20</td><td width="40px">21</td>
+	       <td width="40px">22</td><td width="40px">23</td><td width="40px">24</td></tr>
+	       
+	       <tr><td width="100px" height="40px">星期天</td><td colspan="24" rowspan="7">
+	       <!-- table -->
+	       <table class="mytable2" id="main" onmouseup="end()" class="mytable">         
+	           <tr height="40px">
+	           <td width="40px" id="101" onmousedown="start('101')" onmousemove="select('101')"></td><td width="40px" id="102" onmousedown="start('102')" onmousemove="select('102')"></td><td width="40px" id="103" onmousedown="start('103')" onmousemove="select('103')"></td>
+	           <td width="40px" id="104" onmousedown="start('104')" onmousemove="select('104')"></td><td width="40px" id="105" onmousedown="start('105')" onmousemove="select('105')"></td><td width="40px" id="106" onmousedown="start('106')" onmousemove="select('106')"></td>
+	           <td width="40px" id="107" onmousedown="start('107')" onmousemove="select('107')"></td><td width="40px" id="108" onmousedown="start('108')" onmousemove="select('108')"></td><td width="40px" id="109" onmousedown="start('109')" onmousemove="select('109')"></td>
+	           <td width="40px" id="110" onmousedown="start('110')" onmousemove="select('110')"></td><td width="40px" id="111" onmousedown="start('111')" onmousemove="select('111')"></td><td width="40px" id="112" onmousedown="start('112')" onmousemove="select('112')"></td>
+	           <td width="40px" id="113" onmousedown="start('113')" onmousemove="select('113')"></td><td width="40px" id="114" onmousedown="start('114')" onmousemove="select('114')"></td><td width="40px" id="115" onmousedown="start('115')" onmousemove="select('115')"></td>
+	           <td width="40px" id="116" onmousedown="start('116')" onmousemove="select('116')"></td><td width="40px" id="117" onmousedown="start('117')" onmousemove="select('117')"></td><td width="40px" id="118" onmousedown="start('118')" onmousemove="select('118')"></td>
+	           <td width="40px" id="119" onmousedown="start('110')" onmousemove="select('119')"></td><td width="40px" id="120" onmousedown="start('120')" onmousemove="select('120')"></td><td width="40px" id="121" onmousedown="start('121')" onmousemove="select('121')"></td>
+	           <td width="40px" id="122" onmousedown="start('122')" onmousemove="select('122')"></td><td width="40px" id="123" onmousedown="start('123')" onmousemove="select('123')"></td><td width="40px" id="124" onmousedown="start('124')" onmousemove="select('124')"></td></tr>
+	           
+	           <tr height="40px">
+	           <td width="40px" id="201" onmousedown="start('201')" onmousemove="select('201')"></td><td width="40px" id="202" onmousedown="start('202')" onmousemove="select('202')"></td><td width="40px" id="203" onmousedown="start('203')" onmousemove="select('203')"></td>
+	           <td width="40px" id="204" onmousedown="start('204')" onmousemove="select('204')"></td><td width="40px" id="205" onmousedown="start('205')" onmousemove="select('205')"></td><td width="40px" id="206" onmousedown="start('206')" onmousemove="select('206')"></td>
+	           <td width="40px" id="207" onmousedown="start('207')" onmousemove="select('207')"></td><td width="40px" id="208" onmousedown="start('208')" onmousemove="select('208')"></td><td width="40px" id="209" onmousedown="start('209')" onmousemove="select('209')"></td>
+	           <td width="40px" id="210" onmousedown="start('210')" onmousemove="select('210')"></td><td width="40px" id="211" onmousedown="start('211')" onmousemove="select('211')"></td><td width="40px" id="212" onmousedown="start('212')" onmousemove="select('212')"></td>
+	           <td width="40px" id="213" onmousedown="start('213')" onmousemove="select('213')"></td><td width="40px" id="214" onmousedown="start('214')" onmousemove="select('214')"></td><td width="40px" id="215" onmousedown="start('215')" onmousemove="select('215')"></td>
+	           <td width="40px" id="216" onmousedown="start('216')" onmousemove="select('216')"></td><td width="40px" id="217" onmousedown="start('217')" onmousemove="select('217')"></td><td width="40px" id="218" onmousedown="start('218')" onmousemove="select('218')"></td>
+	           <td width="40px" id="219" onmousedown="start('219')" onmousemove="select('219')"></td><td width="40px" id="220" onmousedown="start('220')" onmousemove="select('220')"></td><td width="40px" id="221" onmousedown="start('221')" onmousemove="select('221')"></td>
+	           <td width="40px" id="222" onmousedown="start('222')" onmousemove="select('222')"></td><td width="40px" id="223" onmousedown="start('223')" onmousemove="select('223')"></td><td width="40px" id="224" onmousedown="start('224')" onmousemove="select('224')"></td></tr>
+	           
+	           <tr height="40px">
+	           <td width="40px" id="301" onmousedown="start('301')" onmousemove="select('301')"></td><td width="40px" id="302" onmousedown="start('302')" onmousemove="select('302')"></td><td width="40px" id="303" onmousedown="start('303')" onmousemove="select('303')"></td>
+	           <td width="40px" id="304" onmousedown="start('304')" onmousemove="select('304')"></td><td width="40px" id="305" onmousedown="start('305')" onmousemove="select('305')"></td><td width="40px" id="306" onmousedown="start('306')" onmousemove="select('306')"></td>
+	           <td width="40px" id="307" onmousedown="start('307')" onmousemove="select('307')"></td><td width="40px" id="308" onmousedown="start('308')" onmousemove="select('308')"></td><td width="40px" id="309" onmousedown="start('309')" onmousemove="select('309')"></td>
+	           <td width="40px" id="310" onmousedown="start('310')" onmousemove="select('310')"></td><td width="40px" id="311" onmousedown="start('311')" onmousemove="select('311')"></td><td width="40px" id="312" onmousedown="start('312')" onmousemove="select('312')"></td>
+	           <td width="40px" id="313" onmousedown="start('313')" onmousemove="select('313')"></td><td width="40px" id="314" onmousedown="start('314')" onmousemove="select('314')"></td><td width="40px" id="315" onmousedown="start('315')" onmousemove="select('315')"></td>
+	           <td width="40px" id="316" onmousedown="start('316')" onmousemove="select('316')"></td><td width="40px" id="317" onmousedown="start('317')" onmousemove="select('317')"></td><td width="40px" id="318" onmousedown="start('318')" onmousemove="select('318')"></td>
+	           <td width="40px" id="319" onmousedown="start('319')" onmousemove="select('319')"></td><td width="40px" id="320" onmousedown="start('320')" onmousemove="select('320')"></td><td width="40px" id="321" onmousedown="start('321')" onmousemove="select('321')"></td>
+	           <td width="40px" id="322" onmousedown="start('322')" onmousemove="select('322')"></td><td width="40px" id="323" onmousedown="start('323')" onmousemove="select('323')"></td><td width="40px" id="324" onmousedown="start('324')" onmousemove="select('324')"></td></tr>
+	           
+	           <tr height="40px">
+	           <td width="40px" id="401" onmousedown="start('401')" onmousemove="select('401')"></td><td width="40px" id="402" onmousedown="start('402')" onmousemove="select('402')"></td><td width="40px" id="403" onmousedown="start('403')" onmousemove="select('403')"></td>
+	           <td width="40px" id="404" onmousedown="start('404')" onmousemove="select('404')"></td><td width="40px" id="405" onmousedown="start('405')" onmousemove="select('405')"></td><td width="40px" id="406" onmousedown="start('406')" onmousemove="select('406')"></td>
+	           <td width="40px" id="407" onmousedown="start('407')" onmousemove="select('407')"></td><td width="40px" id="408" onmousedown="start('408')" onmousemove="select('408')"></td><td width="40px" id="409" onmousedown="start('409')" onmousemove="select('409')"></td>
+	           <td width="40px" id="410" onmousedown="start('410')" onmousemove="select('410')"></td><td width="40px" id="411" onmousedown="start('411')" onmousemove="select('411')"></td><td width="40px" id="412" onmousedown="start('412')" onmousemove="select('412')"></td>
+	           <td width="40px" id="413" onmousedown="start('413')" onmousemove="select('413')"></td><td width="40px" id="414" onmousedown="start('414')" onmousemove="select('414')"></td><td width="40px" id="415" onmousedown="start('415')" onmousemove="select('415')"></td>
+	           <td width="40px" id="416" onmousedown="start('416')" onmousemove="select('416')"></td><td width="40px" id="417" onmousedown="start('417')" onmousemove="select('417')"></td><td width="40px" id="418" onmousedown="start('418')" onmousemove="select('418')"></td>
+	           <td width="40px" id="419" onmousedown="start('419')" onmousemove="select('419')"></td><td width="40px" id="420" onmousedown="start('420')" onmousemove="select('420')"></td><td width="40px" id="421" onmousedown="start('421')" onmousemove="select('421')"></td>
+	           <td width="40px" id="422" onmousedown="start('422')" onmousemove="select('422')"></td><td width="40px" id="423" onmousedown="start('423')" onmousemove="select('423')"></td><td width="40px" id="424" onmousedown="start('424')" onmousemove="select('424')"></td></tr>
+	           
+	           <tr height="40px">
+	           <td width="40px" id="501" onmousedown="start('501')" onmousemove="select('501')"></td><td width="40px" id="502" onmousedown="start('502')" onmousemove="select('502')"></td><td width="40px" id="503" onmousedown="start('503')" onmousemove="select('503')"></td>
+	           <td width="40px" id="504" onmousedown="start('504')" onmousemove="select('504')"></td><td width="40px" id="505" onmousedown="start('505')" onmousemove="select('505')"></td><td width="40px" id="506" onmousedown="start('506')" onmousemove="select('506')"></td>
+	           <td width="40px" id="507" onmousedown="start('507')" onmousemove="select('507')"></td><td width="40px" id="508" onmousedown="start('508')" onmousemove="select('508')"></td><td width="40px" id="509" onmousedown="start('509')" onmousemove="select('509')"></td>
+	           <td width="40px" id="510" onmousedown="start('510')" onmousemove="select('510')"></td><td width="40px" id="511" onmousedown="start('511')" onmousemove="select('511')"></td><td width="40px" id="512" onmousedown="start('512')" onmousemove="select('512')"></td>
+	           <td width="40px" id="513" onmousedown="start('513')" onmousemove="select('513')"></td><td width="40px" id="514" onmousedown="start('514')" onmousemove="select('514')"></td><td width="40px" id="515" onmousedown="start('515')" onmousemove="select('515')"></td>
+	           <td width="40px" id="516" onmousedown="start('516')" onmousemove="select('516')"></td><td width="40px" id="517" onmousedown="start('517')" onmousemove="select('517')"></td><td width="40px" id="518" onmousedown="start('518')" onmousemove="select('518')"></td>
+	           <td width="40px" id="519" onmousedown="start('519')" onmousemove="select('519')"></td><td width="40px" id="520" onmousedown="start('520')" onmousemove="select('520')"></td><td width="40px" id="521" onmousedown="start('521')" onmousemove="select('521')"></td>
+	           <td width="40px" id="522" onmousedown="start('522')" onmousemove="select('522')"></td><td width="40px" id="523" onmousedown="start('523')" onmousemove="select('523')"></td><td width="40px" id="524" onmousedown="start('524')" onmousemove="select('524')"></td></tr>
+	           
+	           <tr height="40px">
+	           <td width="40px" id="601" onmousedown="start('601')" onmousemove="select('601')"></td><td width="40px" id="602" onmousedown="start('602')" onmousemove="select('602')"></td><td width="40px" id="603" onmousedown="start('603')" onmousemove="select('603')"></td>
+	           <td width="40px" id="604" onmousedown="start('604')" onmousemove="select('604')"></td><td width="40px" id="605" onmousedown="start('605')" onmousemove="select('605')"></td><td width="40px" id="606" onmousedown="start('606')" onmousemove="select('606')"></td>
+	           <td width="40px" id="607" onmousedown="start('607')" onmousemove="select('607')"></td><td width="40px" id="608" onmousedown="start('608')" onmousemove="select('608')"></td><td width="40px" id="609" onmousedown="start('609')" onmousemove="select('609')"></td>
+	           <td width="40px" id="610" onmousedown="start('610')" onmousemove="select('610')"></td><td width="40px" id="611" onmousedown="start('611')" onmousemove="select('611')"></td><td width="40px" id="612" onmousedown="start('612')" onmousemove="select('612')"></td>
+	           <td width="40px" id="613" onmousedown="start('613')" onmousemove="select('613')"></td><td width="40px" id="614" onmousedown="start('614')" onmousemove="select('614')"></td><td width="40px" id="615" onmousedown="start('615')" onmousemove="select('615')"></td>
+	           <td width="40px" id="616" onmousedown="start('616')" onmousemove="select('616')"></td><td width="40px" id="617" onmousedown="start('617')" onmousemove="select('617')"></td><td width="40px" id="618" onmousedown="start('618')" onmousemove="select('618')"></td>
+	           <td width="40px" id="619" onmousedown="start('619')" onmousemove="select('619')"></td><td width="40px" id="620" onmousedown="start('620')" onmousemove="select('620')"></td><td width="40px" id="621" onmousedown="start('621')" onmousemove="select('621')"></td>
+	           <td width="40px" id="622" onmousedown="start('622')" onmousemove="select('622')"></td><td width="40px" id="623" onmousedown="start('623')" onmousemove="select('623')"></td><td width="40px" id="624" onmousedown="start('624')" onmousemove="select('624')"></td></tr>
+	               
+	           <tr height="40px">
+	           <td width="40px" id="701" onmousedown="start('701')" onmousemove="select('701')"></td><td width="40px" id="702" onmousedown="start('702')" onmousemove="select('702')"></td><td width="40px" id="703" onmousedown="start('703')" onmousemove="select('703')"></td>
+	           <td width="40px" id="704" onmousedown="start('704')" onmousemove="select('704')"></td><td width="40px" id="705" onmousedown="start('705')" onmousemove="select('705')"></td><td width="40px" id="706" onmousedown="start('706')" onmousemove="select('706')"></td>
+	           <td width="40px" id="707" onmousedown="start('707')" onmousemove="select('707')"></td><td width="40px" id="708" onmousedown="start('708')" onmousemove="select('708')"></td><td width="40px" id="709" onmousedown="start('709')" onmousemove="select('709')"></td>
+	           <td width="40px" id="710" onmousedown="start('710')" onmousemove="select('710')"></td><td width="40px" id="711" onmousedown="start('711')" onmousemove="select('711')"></td><td width="40px" id="712" onmousedown="start('712')" onmousemove="select('712')"></td>
+	           <td width="40px" id="713" onmousedown="start('713')" onmousemove="select('713')"></td><td width="40px" id="714" onmousedown="start('714')" onmousemove="select('714')"></td><td width="40px" id="715" onmousedown="start('715')" onmousemove="select('715')"></td>
+	           <td width="40px" id="716" onmousedown="start('716')" onmousemove="select('716')"></td><td width="40px" id="717" onmousedown="start('717')" onmousemove="select('717')"></td><td width="40px" id="718" onmousedown="start('718')" onmousemove="select('718')"></td>
+	           <td width="40px" id="719" onmousedown="start('719')" onmousemove="select('719')"></td><td width="40px" id="720" onmousedown="start('720')" onmousemove="select('720')"></td><td width="40px" id="721" onmousedown="start('721')" onmousemove="select('721')"></td>
+	           <td width="40px" id="722" onmousedown="start('722')" onmousemove="select('722')"></td><td width="40px" id="723" onmousedown="start('723')" onmousemove="select('723')"></td><td width="40px" id="724" onmousedown="start('724')" onmousemove="select('724')"></td></tr>
+	               
+	       </table>
+	       <!-- table -->
+	       </td></tr>
+	       <tr height="40px"><td width="100px">星期一</td></tr>
+	        <tr height="40px"><td width="100px">星期二</td></tr>
+	        <tr height="40px"><td width="100px">星期三</td></tr>
+	        <tr height="40px"><td width="100px">星期四</td></tr>
+	        <tr height="40px"><td width="100px">星期五</td></tr>
+	        <tr height="40px"><td width="100px">星期六</td></tr>
+	        <tr height="40px"><td colspan="25">
+	        <a href="#" onclick="savePlot()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+            <a href="#" class="easyui-linkbutton" onclick="resetPlot()" data-options="iconCls:'icon-remove'">重置</a>
+	        </td></tr>
+	    </table>
+    </div>    
+    
+    
+    <!-- 进度条 -->
+    <div id="w3" class="easyui-window" title="正在加载" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:450px;height:20px;padding:10px;">
+        <iframe id="excel" src="" frameborder=no width="0px scrolling="no"   
+       style="margin-top: -4px;" 
+       height="0px"></iframe>  
+    </div>    
+    
+    
+                <!-- 弹出框 -->
+    <div id="w4" class="easyui-window" title="批量导入" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:440px;height:140px;padding:10px;">
+        <iframe id="upload" src="excelin.html" frameborder=no width="100%" scrolling="no"   
+               style="margin-top: -4px;" 
+               height="100%"></iframe>                                   
+    </div>
+            	
+</body>
+</html>

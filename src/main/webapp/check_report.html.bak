@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>检测报告</title>
+
+
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/highcharts.js"></script>
+<script type="text/javascript" src="js/check_report.js" charset="utf-8"></script>
+
+</head>
+<body onload="init()">
+
+		<div id="container" style="height: 160px; margin: 0 auto"></div>
+
+</body>
+</html>

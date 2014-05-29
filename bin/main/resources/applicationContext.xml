@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:drools="http://drools.org/schema/drools-spring"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" 
+	xmlns:security="http://www.springframework.org/schema/security" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:task="http://www.springframework.org/schema/task" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd 
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd 
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+		http://drools.org/schema/drools-spring http://drools.org/schema/drools-spring-1.2.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+     
+     
+
+
+     <context:annotation-config />  
+     <context:component-scan base-package="com.service.impl"/>
+     <context:component-scan base-package="com.dao.impl"/>
+     <context:component-scan base-package="com.task"/>
+
+
+     <task:annotation-driven /> 
+     <aop:aspectj-autoproxy/>  
+     
+     	<!-- 加载连接池配置文件 -->
+	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:c3p0.properties</value>
+		</property>
+	</bean>
+     
+     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName"><value>java:comp/env/jdbc/MEGA365</value></property>
+     </bean>
+     
+     <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		 <property name="driverClass"><value>${ds1.driverClass}</value> </property>
+		<property name="jdbcUrl"><value>${ds1.jdbcUrl}</value></property>
+		<property name="properties">
+			<props>
+				<prop key="user">${ds1.user}</prop>
+				<prop key="password">${ds1.password}</prop>
+				<prop key="c3p0.min_size">${c3p0.min_size}</prop>
+				<prop key="c3p0.max_size">${c3p0.max_size}</prop>
+				<prop key="c3p0.timeout">${c3p0.timeout}</prop>
+				<prop key="c3p0.acquire_increment">${c3p0.acquire_increment}</prop>
+				<prop key="c3p0.max_statements">${c3p0.max_statements}</prop>
+				<prop key="c3p0.idle_test_period">${c3p0.idle_test_period}</prop>
+			</props>
+		</property>
+		<property name="testConnectionOnCheckin"><value>true</value></property>
+		<property name="idleConnectionTestPeriod"><value>60</value></property>    
+	</bean> -->
+     
+	 <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+	 	<property name="dataSource" ref="dataSource" />
+	 	<property name="packagesToScan" value="com.po"/>
+	 	<property name="hibernateProperties">
+	 		<props>
+	 		    <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+	 			<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+	 			<prop key="hibernate.show_sql">true</prop>
+	 			<prop key="hibernate.hbm2ddl.auto">update</prop> 
+	 		</props>
+	 	</property>
+     </bean>
+     
+    <bean
+        class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"
+        p:ignoreDefaultModelOnRedirect="true">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+                    <property name="objectMapper"> 
+                        <bean class="org.codehaus.jackson.map.ObjectMapper"> 
+							<property name="dateFormat"> 
+								<bean class="java.text.SimpleDateFormat"> 
+								    <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"></constructor-arg> 
+								</bean> 
+							</property> 
+						</bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean> 
+
+     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">   
+        <property name="sessionFactory" ref="sessionFactory"/>   
+    </bean>
+    
+    
+    
+    <!-- 使用annotation定义事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+    
+    
+    
+	<bean id="myBefore" class="com.core.aop.MyAop"></bean>
+	<aop:config>
+		<aop:aspect id="abcd" ref="myBefore">
+		<aop:pointcut id="myPointcut" expression="execution(* com.service.*.*(..))"/>
+		<aop:before pointcut-ref="myPointcut" method="befor"/>
+		</aop:aspect>
+	</aop:config>
+	
+	
+	
+	
+    <!-- 配置connectionFactory -->  
+    <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory"  
+        destroy-method="stop">  
+        <property name="connectionFactory">  
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">  
+                <property name="brokerURL">  
+                    <value>tcp://25.30.5.86:61616</value>  
+                </property> 
+                <property name="userName">
+                	<value>admin</value>
+                </property>
+                <property name="password">
+                	<value>password</value>
+                </property>
+            </bean>  
+        </property>  
+        <property name="maxConnections" value="100"></property>  
+    </bean>   
+    
+    
+    <!-- Spring JMS Template
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">  
+        <property name="connectionFactory">  
+            <ref local="jmsFactory" />  
+        </property>  
+        <property name="defaultDestinationName" value="event" />  
+        <property name="pubSubDomain" value="true" />  
+    </bean>  
+  
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">  
+        <constructor-arg index="0" value="event" />  
+    </bean>  
+  
+  
+  <bean id="messageListener1" class="com.jms.JMSReceiverAsync" />
+  
+    <bean id="listenerContainer"  
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">  
+        <property name="concurrentConsumers" value="10" />  
+        <property name="connectionFactory" ref="jmsFactory" />  
+        <property name="destinationName" value="event" />  
+        <property name="messageListener" ref="messageListener1" />  
+        <property name="pubSubNoLocal" value="false"></property>  
+    </bean>  
+    
+    <bean id="multipartResolver"  
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver" p:defaultEncoding="utf-8"/>
+        
+         -->  
+        
+        <!-- JBPM 5.4  
+    <bean id="xDataSource"  
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />  
+        <property name="url"  
+            value="jdbc:mysql://127.0.0.1:3306/demo?characterEncoding=UTF-8" />  
+        <property name="username" value="demo" />  
+        <property name="password" value="demo" />  
+    </bean>  
+    <bean id="jbpmEntityManagerFactory"  
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">  
+        <property name="dataSource" ref="dataSource" />  
+        <property name="persistenceUnitName" value="org.jbpm.persistence.local" />  
+    </bean>  
+    <bean id="jbpmTxManager" class="org.springframework.orm.jpa.JpaTransactionManager">  
+        <property name="entityManagerFactory" ref="jbpmEntityManagerFactory" /> 
+        <property name="nestedTransactionAllowed" value="true" />  
+    </bean>  
+      
+    <drools:grid-node id="node1" />  
+    <drools:kstore id="kstore1" />  
+    <drools:kbase id="kbase" node="node1">  
+        <drools:resources>  
+            <drools:resource type="BPMN2" source="classpath:sample.bpmn" />  
+        </drools:resources>  
+    </drools:kbase>  
+    <drools:ksession id="ksession" type="stateful" kbase="kbase" node="node1">  
+        <drools:configuration>  
+            <drools:jpa-persistence>  
+                <drools:transaction-manager ref="jbpmTxManager" />  
+                <drools:entity-manager-factory ref="jbpmEntityManagerFactory" />  
+            </drools:jpa-persistence>  
+        </drools:configuration>  
+    </drools:ksession>  
+      
+    <bean id="systemEventListener" class="org.drools.SystemEventListenerFactory"  
+        factory-method="getSystemEventListener" />  
+    <bean id="internalTaskService" class="org.jbpm.task.service.TaskService">  
+        <property name="systemEventListener" ref="systemEventListener" />  
+    </bean>  
+    <bean id="htTxManager"  
+        class="org.drools.container.spring.beans.persistence.HumanTaskSpringTransactionManager">  
+        <constructor-arg ref="jbpmTxManager" />  
+    </bean>  
+    <bean id="springTaskSessionFactory"  
+        class="org.jbpm.task.service.persistence.TaskSessionSpringFactoryImpl"  
+        init-method="initialize" depends-on="internalTaskService">  
+        <property name="entityManagerFactory" ref="jbpmEntityManagerFactory" />  
+        <property name="transactionManager" ref="htTxManager" />  
+        <property name="useJTA" value="true" />  
+        <property name="taskService" ref="internalTaskService" />  
+    </bean>  
+    <bean id="taskService" class="org.jbpm.task.service.local.LocalTaskService"  
+        depends-on="internalTaskService">  
+        <constructor-arg ref="internalTaskService" />  
+    </bean>   --> 
+
+</beans>

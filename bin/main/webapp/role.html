@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="themes/icon.css">
+<link rel="stylesheet" type="text/css" href="demo.css">
+<link rel="stylesheet" type="text/css" href="css/button.css">
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="jquery.easyui.min.js"></script>
+<script type="text/javascript" src="js/role.js"></script>
+<script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body onload="getRole()">
+	<table id="dg" singleSelect="true" nowrap="false" fitColumns="true"
+		title="角色管理"></table>
+
+	<!-- 弹出框 -->
+	<div id="w" class="easyui-window" title="新增角色"
+		data-options="modal:true,closed:true,iconCls:'icon-save'"
+		style="width: 370px; height: 220px; padding: 10px;">
+		<form id="frmRole" method="post">
+			<table>
+				<tr>
+					<td></td>
+					<td><input class="easyui-validatebox" type="hidden" name="id"
+						data-options="required:false" style="width: 270px;"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>名称:</td>
+					<td><input class="easyui-validatebox" type="text" name="name"
+						data-options="required:true" style="width: 270px;"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>状态:</td>
+					<td><select class="easyui-combobox" name="status"
+						style="width: 273px;">
+							<option value="1">启用</option>
+							<option value="0">停用</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td>备注:</td>
+					<td><textarea name="remark"
+							style="height: 60px; width: 270px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center"><a href="#"
+						onclick="addRole22()" class="easyui-linkbutton"
+						data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp; <a href="#"
+						class="easyui-linkbutton" onclick="closeW()"
+						data-options="iconCls:'icon-cancel'">关闭</a>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+
+	<!-- 授权弹出框 -->
+	<div id="w2" class="easyui-window" title="角色授权"
+		data-options="modal:true,closed:true,iconCls:'icon-save'"
+		style="width: 600px; height: 370px; padding: 0px;">
+		<table width="100%" border="0px" height="100%">
+			<tr>
+				<td width="40%">
+					<table id="dg22" class="easyui-datagrid" title="未授权功能"
+						style="height: 300px"
+						data-options="rownumbers:true,singleSelect:false,url:'',method:'get'">
+						<thead>
+							<tr>
+								<th data-options="field:'ck',checkbox:true"></th>
+								<th data-options="field:'id',width:75">功能编号</th>
+								<th data-options="field:'name',width:100">功能名称</th>
+							</tr>
+						</thead>
+					</table></td>
+				<td width="20%" align="center"><a href="#" onclick="addRole();"
+					class="easyui-linkbutton" data-options="iconCls:'icon-add'">授权</a>
+					<br /> <br /> <br /> <a href="#" onclick="removeRole()"
+					class="easyui-linkbutton" data-options="iconCls:'icon-remove'">撤销</a>
+				</td>
+				<td width="40%">
+					<table id="dg11" class="easyui-datagrid" title="已授权功能"
+						style="height: 300px"
+						data-options="rownumbers:true,singleSelect:false,url:'',method:'get'">
+						<thead>
+							<tr>
+								<th data-options="field:'ck',checkbox:true"></th>
+								<th data-options="field:'itemid',width:80">功能编号</th>
+								<th data-options="field:'productid',width:100">功能名称</th>
+							</tr>
+						</thead>
+					</table></td>
+			</tr>
+			<tr>
+				<td colspan="3" align="center"><a href="#" onclick="saveAnth()"
+					class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+					<a href="#" class="easyui-linkbutton" onclick="closeW2()"
+					data-options="iconCls:'icon-cancel'">关闭</a>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

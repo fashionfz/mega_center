@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link  rel="shortcut icon"  href="images/link.ico">
+	<meta charset="UTF-8">
+	<title>建行365网站</title>
+	<style>a{text-decoration:none;color:#444444}</style>
+	<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="js/menu.js"></script>
+	
+    <script type="text/javascript" src="js/amq_jquery_adapter.js"></script>
+    <script type="text/javascript" src="js/amq.js"></script>
+    <script type="text/javascript" src="yanue.pop.js"></script>	
+    
+    <style type="text/css">
+    .icon-system{
+    background:url('images/weihu.gif') no-repeat center center;
+    }
+    .icon-user{
+    background:url('images/dbrmanage.gif') no-repeat center center;
+    }   
+    .icon-role{
+    background:url('images/addservice.png') no-repeat center center;
+    }     
+    .icon-device{
+    background:url('images/workspace.gif') no-repeat center center;
+    }
+    .icon-home{
+    background:url('images/menu.gif') no-repeat center center;
+    } 
+    .icon-menu{
+    background:url('images/rolemenu.gif') no-repeat center center;
+    }   
+    .icon-config{
+    background:url('images/myconsle.png') no-repeat center center;
+    }  
+    .icon-licence{
+    background:url('images/cc.png') no-repeat center center;
+    }    
+    .icon-checkreport{
+    background:url('images/nn.png') no-repeat center center;
+    }   
+    .icon-about{
+    background:url('images/uu.png') no-repeat center center;
+    }   
+    .icon-dvr{
+    background:url('images/ll.png') no-repeat center center;
+    }     
+    .icon-group{
+    background:url('images/qq.png') no-repeat center center;
+    }  
+    .icon-log{
+    background:url('images/ww.png') no-repeat center center;
+    }                       
+    </style>
+    
+    
+    <script type="text/javascript">
+    
+    
+    
+    
+    
+    
+    var amq = org.activemq.Amq;
+    amq.init({ 
+      uri: 'amq', 
+      logging: true,
+      timeout: 20
+    });
+    var myHandler =
+    {
+      rcvMessage: function(message)
+      {
+    	  $('embed').remove();  
+    	  $('body').append('<embed src="music/AlarmEvent.wav" autostart="true" hidden="true" loop="false">'); 
+          new Pop("你有新消息",
+                  "#",message.text);
+
+      }
+    };
+    
+    function sendMsg(msg){
+    	amq.sendMessage("topic://FirstTopic",msg,"amq-msg-type=>'text'");
+    }
+    
+    function getUserName(){
+    	return document.getElementById('top').contentWindow.getName();
+    }
+    
+    
+    function init(){
+        $.ajaxSetup({cache:false});
+        $.getJSON("queryMenuByUser.do", function(data){
+            $.each(data, function(i,item){
+            	if(item.url=="/user.html"){
+            		$('#sys_user1').linkbutton('enable');
+            		$('#sys_user2').linkbutton('enable');
+            	}
+            	if(item.url=="/role.html"){
+                    $('#sys_role1').linkbutton('enable');
+                    $('#sys_role2').linkbutton('enable');
+            	}
+            	if(item.url=="/menu.html"){
+                    $('#sys_menu1').linkbutton('enable');
+                    $('#sys_menu2').linkbutton('enable');
+            	}
+                if(item.url=="/service.html"){
+                    $('#sys_service1').linkbutton('enable');
+                    $('#sys_service2').linkbutton('enable');
+                }            	
+            	if(item.url=="/licence.html"){
+                    $('#licence1').linkbutton('enable');
+                    $('#licence2').linkbutton('enable');
+            	}
+            	if(item.url=="/check_report.html"){
+                    $('#check_report1').linkbutton('enable');
+                    $('#check_report2').linkbutton('enable');
+                    $('#consle1').linkbutton('enable');
+                    $('#consle2').linkbutton('enable');
+                    openUrl("check_report.html");
+            	}
+            	if(item.url=="/check_log.html"){
+                    $('#check_log1').linkbutton('enable');
+                    $('#check_log2').linkbutton('enable');
+            	}
+            	if(item.url=="/history_report.html"){
+                    $('#check_history1').linkbutton('enable');
+                    $('#check_history2').linkbutton('enable');
+            	}
+            	if(item.url=="/devicegroup.html"){
+                    $('#group1').linkbutton('enable');
+                    $('#group2').linkbutton('enable');
+            	}
+            	if(item.url=="/checkconfig.html"){
+                    $('#config1').linkbutton('enable');
+                    $('#config2').linkbutton('enable');
+            	}
+            	if(item.url=="/device.html"){
+                    $('#device1').linkbutton('enable');
+                    $('#device2').linkbutton('enable');
+            	}
+            });
+        });
+    	
+        amq.addListener("megaeyes","topic://FirstTopic",myHandler.rcvMessage); 
+    }    
+    </script>
+	
+</head>
+<body id="cc" class="easyui-layout" onload="init()">
+	<div data-options="region:'north',border:false" style="height:120px;background:#FFFFFF;padding:0px">
+	    <div style="padding:0px;border:1px solid #ddd;margin-top:0px;height:90px;">
+                      <iframe id="top" src="top.jsp" frameborder="no" height="100%" width="100%" scrolling="no"></iframe>
+	    </div>
+	    
+	    <div style="padding:0px;border:1px solid #ddd;margin-top:0px;background:#ffffff">
+	        <a href="#" class="easyui-menubutton" data-options="menu:'#mm1',iconCls:'icon-edit'">检测管理</a>
+	        <a href="#" class="easyui-menubutton" data-options="menu:'#mm2',iconCls:'icon-device'">设备管理</a>
+	        <a href="#" class="easyui-menubutton" data-options="menu:'#mm4',iconCls:'icon-system'">系统管理</a>
+	        <a href="#" class="easyui-menubutton" data-options="menu:'#mm3',iconCls:'icon-help'">系统帮助</a> 
+	    </div>
+	    <div id="mm1" style="width:150px;">
+	        <a id="check_report1" href="javascript:openUrl('check_report.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-checkreport'">检查报告
+	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+	        <a id="check_history1" href="javascript:openUrl('history_report.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-checkreport'">历史报告
+	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+	        <a id="check_log1" href="javascript:openUrl('check_log.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-log'">检查日志
+	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+	        <div class="menu-sep"></div>
+	        <a id="config1" href="javascript:openUrl('checkconfig.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-config'">检测配置
+	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+	    </div>
+	    <div id="mm2" style="width:150px;">
+	        <a id="device1" href="javascript:openUrl('device.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-dvr'">DVR管理
+	        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <a id="group1" href="javascript:openUrl('devicegroup.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-group'">设备组管理
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>	        
+	    </div>
+	    <div id="mm3" style="width:150px;">
+            <a id="licence1" href="javascript:openUrl('licence.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-licence'">授权管理
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+	    </div>	
+        <div id="mm4" style="width:150px;">
+            <a id="sys_user1" href="javascript:openUrl('user.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-user'">用户管理
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <a id="sys_role1" href="javascript:openUrl('role.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-role'">角色管理
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <a id="sys_menu1" href="javascript:openUrl('menu.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-menu'">功能管理
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+            <div class="menu-sep"></div>
+            <a id="sys_service1" href="javascript:openUrl('service.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-menu'">服务管理
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>            
+        </div>    
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	<div data-options="region:'west',split:true,title:'导航'" style="width:150px;padding:0px;">
+        <div id="daohang" class="easyui-accordion" data-options="fit:true,border:false">
+                <div data-options="selected:true" title="检测管理" style="padding:10px;">
+                    <a id="check_report2" href="javascript:openUrl('check_report.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-checkreport'">检查报告</a>
+                    <a id="check_history2" href="javascript:openUrl('history_report.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-checkreport'">历史报告</a>
+                    <a id="check_log2" href="javascript:openUrl('check_log.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-log'">检查日志</a>
+                    <a id="config2" href="javascript:openUrl('checkconfig.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-config'">检测配置</a>
+                </div>
+                <div title="设备管理" style="padding:10px">
+                    <a id="device2" href="javascript:openUrl('device.html')" class="easyui-linkbutton" data-options="disabled:true,hidden:true,plain:true,iconCls:'icon-dvr'">DVR管理</a>
+                    <a id="group2" href="javascript:openUrl('devicegroup.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-group'">设备组管理</a>
+                </div>
+                <div title="系统管理" style="padding:10px">
+                    <a id="sys_user2" href="javascript:openUrl('user.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-user'">用户管理</a>
+                    <a id="sys_role2" href="javascript:openUrl('role.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-role'">角色管理</a>
+                    <a id="sys_menu2" href="javascript:openUrl('menu.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-menu'">功能管理</a>
+                    <a id="sys_service2" href="javascript:openUrl('service.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-menu'">服务管理</a>                    
+                </div>     
+                <div title="系统帮助" style="padding:10px">
+                    <a id="licence2" href="javascript:openUrl('licence.html')" class="easyui-linkbutton" data-options="disabled:true,plain:true,iconCls:'icon-licence'">授权管理</a>
+                </div>                           
+            </div>	
+	</div>
+	<div id="content" data-options="region:'center',title:'工作区'">
+	   <iframe id="center" src="" frameborder="no" width="100%" scrolling="no" 
+	   style="margin-top: -4px;"  
+	   height="100%"></iframe>
+	</div>
+	
+	
+	
+	
+	
+	<div id="pop" style="display:none;">
+    <style type="text/css">
+    *{margin:0;padding:0;}
+    #pop{background:#fff;width:260px;border:1px solid #e0e0e0;font-size:12px;position: fixed;right:10px;bottom:10px;}
+    #popHead{line-height:32px;background:#ffff93;border-bottom:1px solid #e0e0e0;position:relative;font-size:12px;padding:0 0 0 10px;}
+    #popHead h2{font-size:14px;color:#666;line-height:32px;height:16px;}
+    #popHead #popClose{position:absolute;right:10px;top:1px;}
+    #popHead a#popClose:hover{color:#f00;cursor:pointer;}
+    #popContent{padding:5px 10px;}
+    #popTitle a{line-height:24px;font-size:14px;font-family:'微软雅黑';color:#333;font-weight:bold;text-decoration:none;}
+    #popTitle a:hover{color:#f60;}
+    #popIntro{text-indent:24px;line-height:160%;margin:5px 0;color:#666;}
+    #popMore{text-align:right;border-top:1px dotted #ccc;line-height:24px;margin:8px 0 0 0;}
+    #popMore a{color:#f60;}
+    #popMore a:hover{color:#f00;}
+    </style>
+    <div id="popHead">
+    <a id="popClose" title="关闭">关闭</a>
+    <h2>系统提示</h2>
+    </div>
+    <div id="popContent">
+    <dl>
+        <dt id="popTitle">这里是参数</dt>
+        <dd id="popIntro">这里是内容简介</dd>
+    </dl>
+    <p id="popMore"><a href="javascript:void(0);" onclick="getUserName()">查看</a></p>
+    </div>
+    </div>
+    
+    
+    
+</body>
+</html>

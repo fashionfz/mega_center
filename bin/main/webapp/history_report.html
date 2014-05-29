@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>检测报告</title>
+	<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="css/button.css">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="js/history_report.js"></script>
+</head>
+<body onload="getHistoryReport()">
+	<div class="easyui-panel" title="查询条件"
+		style="overflow: auto; padding: 0px">
+		<div style="padding: 10px 0 10px 60px; text-align: center">
+			<form id="frmQuery" method="post">
+				<table style="width: 95%">
+					<tr>
+						<td style="width: 10%">报告生成时间:</td>
+						<td style="width: 40%"><input class="easyui-datebox" id="beginTime" style="width:500px" value=""/>
+						</td>
+						<td style="width: 10%">报告名称:</td>
+						<td style="width: 40%"><input class="easyui-validatebox"
+							type="text" name="dvrIp" style="width: 100%"></input>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		<div style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton"
+				data-options="iconCls:'icon-search'" onclick="query()">查 询</a>
+		</div>
+	</div>
+
+
+	<div title="设备列表" data-options="iconCls:'icon-ok'" style="overflow: auto; padding: 0px">
+		<table id="dg" style="height: 380px" singleSelect="true" nowrap="false" fitColumns="true" title="设备列表"></table>
+	</div>
+</body>
+</html>

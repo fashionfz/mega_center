@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Custom Panel Tools - jQuery EasyUI Demo</title>
+	<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+	<link rel="stylesheet" type="text/css" href="themes/icon.css">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="jquery.easyui.min.js"></script>
+	
+	<script type="text/javascript">
+	function loadLicence(){
+		$("#upload").attr("src","upload.html");
+		$('#w').window('open');
+	}
+	function closeW(){
+		$('#w').window('close');
+		getMachineCode();
+	}
+	
+	
+	function getMachineCode(){
+		$.ajaxSetup({cache:false});
+        $.getJSON("queryLicence.do", function(data){
+        	$("#Machinecode").html(data.machineCode);
+        	$("#expDate").html(data.expDate);
+        	$("#userCount").html(data.userCount);
+        	$("#deviceCount").html(data.deviceCount);
+          });
+	}
+	</script>
+</head>
+<body onload="getMachineCode()">
+
+	<div style="margin:10px 0;">
+	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="loadLicence()">导 入</a>
+	</div>
+	<div class="easyui-panel" title="授权信息" style="height:400px;padding:10px;"
+			data-options="iconCls:'icon-save',closable:false,tools:'#tt'">
+
+        <table>
+            <tr><td>机器码</td><td id="Machinecode"></td></tr>
+            <tr><td>到期日期</td><td id="expDate"></td></tr>
+            <tr><td>用户数</td><td id="userCount"></td></tr>
+            <tr><td>设备数</td><td id="deviceCount"></td></tr>
+        </table>
+	</div>
+	<div id="tt">
+		<a href="javascript:void(0)" class="icon-edit" onclick="javascript:alert('edit')"></a>
+		<a href="javascript:void(0)" class="icon-help" onclick="javascript:alert('help')"></a>
+	</div>
+	
+	
+	
+	
+	        <!-- 弹出框 -->
+    <div id="w" class="easyui-window" title="授权导入" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:440px;height:140px;padding:10px;">
+		<iframe id="upload" src="upload.html" frameborder=no width="100%" scrolling="no"   
+		       style="margin-top: -4px;" 
+		       height="100%"></iframe>                                   
+    </div>
+	
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>检测报告</title>
+<link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="themes/icon.css">
+<link rel="stylesheet" type="text/css" href="demo.css">
+<style type="text/css">
+.myDiv {
+	background: #FFFEE6;
+}
+.mytable {
+	padding: 0;
+	margin: 0;
+	border-collapse: collapse;
+	text-align: center;
+}
+.td1 {
+	background-color: Silver;
+	border: 1px solid #C1DA07;
+	padding: 0px 0px 0px 0px;
+}
+</style>
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/highcharts.js"></script>
+<script type="text/javascript" src="js/modules/exporting.js"></script>
+<script type="text/javascript" src="jquery.easyui.min.js"></script>
+<script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="js/check_report.js" charset="utf-8"></script>
+
+</head>
+<body onload="init()">
+	<div id="p" class="easyui-panel" title="检测结果"
+		style="height: 140px; padding: 0px;">
+		<div id="container" style="height: 160px; margin: 0 auto"></div>
+	</div>
+
+
+	<div title="检测记录" data-options="iconCls:'icon-ok'"
+		style="overflow: auto; padding: 0px">
+		<table id="dg" singleSelect="true" style="height: 250px"
+			nowrap="false" fitColumns="true" title="设备列表"
+			data-options="
+	                    rownumbers:true,
+	                    singleSelect:true,
+	                    autoRowHeight:false,
+	                    pagination:true,
+	                    pageSize:10,
+	                    toolbar:null">
+			<thead>
+				<tr>
+					<th field="inv" width="10%">编号</th>
+					<th field="deviceId" width="10%">设备编号</th>
+					<th field="vicName" width="15%">摄像头名称</th>
+					<th field="dvrName" width="15%" align="right">DVR名称</th>
+					<th field="localRecordCycle" width="15%" align="right">存储周期</th>
+					<th field="dvrIp" width="15%" align="right">DVR ip</th>
+					<th field="vicType" width="15%" align="right">类型</th>
+					<th field="result" width="20%">检测结果</th>
+					<th field="time" width="20%">检测时间</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+
+	<div id="p" class="easyui-panel" title="检测详情"
+		style="height: 300px; padding: 0px;">
+		<div id="container2" style="height: 140px;"></div>
+		<div style="margin-top: 60px">
+			<form id="frmUser" method="post">
+				<table border="1" width="100%" class="mytable">
+					<tr>
+						<td rowspan="3">Camera1报错备注：</td>
+						<td width="20%">存储出差节点:</td>
+						<td width="20%">存储出错时长</td>
+						<td width="15%">类型</td>
+						<td width="15%">下次检查是否关闭此报错</td>
+						<td width="20%">备注</td>
+					</tr>
+					<tr>
+						<td>2013-10-1 14:00:00</td>
+						<td>20</td>
+						<td><select class="easyui-combobox" name="sex"
+							style="width: 273px">
+								<option value="1">更换磁盘</option>
+								<option value="2">新建设备</option>
+								<option value="3">存储策略改变</option>
+								<option value="4">收到重启DVR</option>
+								<option value="5">其他原因</option>
+						</select></td>
+						<td><select class="easyui-combobox" name="sex"
+							style="width: 273px">
+								<option value="1">关闭</option>
+								<option value="0">不关闭</option>
+						</select></td>
+						<td>4</td>
+					</tr>
+					<tr>
+						<td colspan="5" align="right"><a href="#" onclick="addUser()"
+							class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+							<a href="#" class="easyui-linkbutton" onclick="closeW()"
+							data-options="iconCls:'icon-cancel'">取消</a>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

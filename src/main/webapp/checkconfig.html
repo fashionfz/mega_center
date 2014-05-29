@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Basic Panel - jQuery EasyUI Demo</title>
+    <link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="demo.css">
+    <script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+     <script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+    
+    <script type="text/javascript">
+    function saveConfig(){
+    	var checkCount = $("input[name='checkCount']:checked").val();
+    	var beginTime = $("#beginTime").datetimebox("getValue");
+    	var endTime = $("#endTime").datetimebox("getValue");
+    	var checkType = $("input[name='checkType']:checked").val();
+    	var alarmType = $("input[name='alarm']:checked").val();
+        var logTimeRang = $('#logTimeRang').numberspinner("getValue");
+        var deviceGroup = $("#deviceGroup").combogrid("getValues");
+        var centerTime = $("#centerTime").datetimebox("getValue");
+        var centerType = $("input[name='centerType']:checked").val();
+        var dvrTime = $("#dvrTime").datetimebox("getValue");
+        var dvrType = $("input[name='dvrType']:checked").val();
+        
+        
+    	
+    	var data="{\"beginTime\":\""+beginTime+"\",\"endTime\":\""+endTime+"\",\"checkCount\":"+
+    		checkCount+",\"checkType\":"+checkType+",\"alarmType\":"+alarmType+",\"logTimeRang\":"+
+    		logTimeRang+",\"deviceGroup\":\""+deviceGroup+"\",\"centerTime\":\""+centerTime+"\",\"centerType\":"+
+    		centerType+",\"dvrTime\":\""+dvrTime+"\",\"dvrType\":"+dvrType+"}";
+    		
+        $.ajax({
+            type: "POST",   //访问WebService使用Post方式请求
+            contentType: "application/json", //WebService 会返回Json类型
+            url: "saveCheckConfig.do", //调用WebService的地址和方法名称组合 ---- WsURL/方法名
+            data: data,         //这里是要传递的参数，格式为 data: "{paraName:paraValue}",下面将会看到      
+            dataType: 'json',
+            success: function (result) {     //回调函数，result，返回值
+                alert("保存成功！");
+                init();
+            }
+        });
+    	  
+    }
+    
+    
+    
+    function init(){
+        $.ajaxSetup({cache:false});
+        $.getJSON("queryCheckConfig.do", function(data){
+        	$.each(data, function(i,item){
+        		if(item.itemCode=="beginTime"){
+        			$('#beginTime').datetimebox('setValue', item.itemValue);
+        		}
+        		if(item.itemCode=="endTime"){
+        			$('#endTime').datetimebox('setValue', item.itemValue);
+        		}
+        		if(item.itemCode=="checkCount"){
+        			if(item.itemValue==1)
+        				$("input[name=checkCount]:eq(0)").attr("checked",'checked');
+        			else
+        				$("input[name=checkCount]:eq(1)").attr("checked",'checked');
+        		}
+                if(item.itemCode=="checkType"){
+                    if(item.itemValue==1)
+                        $("input[name=checkType]:eq(0)").attr("checked",'checked');
+                    else if(item.itemValue==2)
+                        $("input[name=checkType]:eq(1)").attr("checked",'checked');
+                    else
+                    	$("input[name=checkType]:eq(2)").attr("checked",'checked');
+                }
+                if(item.itemCode=="alarmType"){
+                    if(item.itemValue==1)
+                        $("input[name=alarm]:eq(0)").attr("checked",'checked');
+                    else
+                        $("input[name=alarm]:eq(1)").attr("checked",'checked');
+                }
+                if(item.itemCode=="logTimeRang"){
+                    $("#logTimeRang").val(item.itemValue);
+                }
+                if(item.itemCode=="deviceGroup"){
+                	var groups = item.itemValue.split(",");
+                	$('#deviceGroup').combogrid('setValues', groups);
+                }
+                if(item.itemCode=="centerTime"){
+                	$('#centerTime').datetimebox('setValue', item.itemValue);
+                }
+                if(item.itemCode=="centerType"){
+                    if(item.itemValue==1)
+                        $("input[name=centerType]:eq(0)").attr("checked",'checked');
+                    else
+                        $("input[name=centerType]:eq(1)").attr("checked",'checked');
+                }
+                if(item.itemCode=="dvrTime"){
+                	$('#dvrTime').datetimebox('setValue', item.itemValue);
+                }
+                if(item.itemCode=="dvrType"){
+                    if(item.itemValue==1)
+                        $("input[name=dvrType]:eq(0)").attr("checked",'checked');
+                    else
+                        $("input[name=dvrType]:eq(1)").attr("checked",'checked');
+                }
+        		
+        	});
+        });
+    }
+    </script>
+</head>
+<body onload="init()">
+	<div id="p" class="easyui-panel" title="系统检测配置" style="height:650px;padding:0px;text-align:right">
+                <div id="p" class="easyui-panel" title="检测设备" style="height:80px;padding:0px;">
+                    <p style="font-size:14px;margin-left:200px">需要检测的设备：
+                        <select id="deviceGroup" class="easyui-combogrid" style="width:500px" data-options="
+                                    panelWidth: 500,
+                                    multiple: true,
+                                    idField: 'id',
+                                    textField: 'name',
+                                    url: 'queryGroup.do',
+                                    method: 'get',
+                                    columns: [[
+                                        {field:'ck',checkbox:true},
+                                        {field:'id',title:'编号',width:110},
+                                        {field:'name',title:'设备组名称',width:90}
+                                    ]],
+                                    fitColumns: true
+                                ">
+                            </select>
+                    </p>
+                </div>	
+                <div id="p" class="easyui-panel" title="系统检测时间" style="height:80px;padding:0px;">
+                    <p style="font-size:14px;margin-left:200px">
+                                                    开始时间：<input class="easyui-datetimebox" required id="beginTime" style="width:250px" value=""/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    结束时间：<input class="easyui-datetimebox" id="endTime"  required style="width:250px" value=""/></p>
+                </div>
+                <div id="p" class="easyui-panel" title="系统检测次数" style="height:80px;padding:0px;">
+                    <p style="font-size:14px">                
+                    <label style="margin-left:200px"><input name="checkCount" type="radio" value="1" />一次/每天</label>                  
+                    <label style="margin-left:300px"><input name="checkCount" type="radio" value="2" />循环检测</label></p>
+                </div>  
+                <div id="p" class="easyui-panel" title="系统检测方式" style="height:80px;padding:0px;">
+                    <p style="font-size:14px">                
+                    <label style="margin-left:200px"><input name="checkType" type="radio" value="1" />逐天检查</label>                  
+                    <label style="margin-left:200px"><input name="checkType" type="radio" value="2" />检查录像周期最后一天</label>
+                    <label style="margin-left:200px"><input name="checkType" type="radio" value="3" />只检测前一天</label></p>
+                </div>
+                <div id="p" class="easyui-panel" title="系统同步时间" style="height:80px;padding:0px;">
+                    <p style="font-size:14px;margin-left:200px">
+                                                          平台自动同步数据：<input class="easyui-datetimebox" required id="centerTime" style="width:250px" value=""/>
+                    <label style="margin-left:10px"><input name="centerType" type="radio" value="1" />每天</label>                  
+                    <label style="margin-left:50px"><input name="centerType" type="radio" value="2" />每周</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                    
+                     DVR策略同步：<input class="easyui-datetimebox" required id="dvrTime" style="width:250px" value=""/>
+                    <label style="margin-left:10px"><input name="dvrType" type="radio" value="1" />每天</label>                  
+                    <label style="margin-left:50px"><input name="dvrType" type="radio" value="2" />每周</label>
+                    </p>
+                </div>
+                <div id="p" class="easyui-panel" title="是否自动提示报警" style="height:80px;padding:0px;">
+                    <p style="font-size:14px">                
+                    <label style="margin-left:200px"><input name="alarm" type="radio" value="1" />当发生录像存储不够时，发出报警提示，并记录</label>                  
+                    <label style="margin-left:300px"><input name="alarm" type="radio" value="2" />当发生录像存储不够时，只记录</label></p>
+                </div>
+                <div id="p" class="easyui-panel" title="检测日志保存时间" style="height:80px;padding:0px;">
+                    <p style="font-size:14px;margin-left:200px">录像检测日志保存天数：
+                    <input class="easyui-numberspinner" id="logTimeRang" data-options="min:1,max:100,required:true" style="width:250px;"></input>
+                    </p>
+                </div>  
+                
+                <p style="font-size:14px;margin-right:50px">
+                <a href="#" onclick="saveConfig()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+                    <a href="#" class="easyui-linkbutton" onclick="closeW()" data-options="iconCls:'icon-cancel'">取消</a></p>                                                                                           
+	</div>
+	
+</body>
+</html>

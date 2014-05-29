@@ -1,0 +1,48 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/ichart.1.1.min.js"></script>
+<script type="text/javascript">
+var data = [
+{name : 'H',value : 7,color:'#a5c2d5'},
+{name : 'E',value : 5,color:'#cbab4f'},
+{name : 'L',value : 12,color:'#76a871'},
+{name : 'L',value : 12,color:'#76a871'},
+{name : 'O',value : 15,color:'#a56f8f'},
+{name : 'W',value : 13,color:'#c12c44'},
+{name : 'O',value : 15,color:'#a56f8f'},
+{name : 'R',value : 18,color:'#9f7961'},
+{name : 'L',value : 12,color:'#76a871'},
+{name : 'D',value : 4,color:'#6f83a5'}
+];
+
+
+$(function(){
+	new iChart.Column2D({
+	render : 'canvasDiv', //渲染目标
+	data: data,//绑定数据
+	title :{ text:'Hello World\'s Height In Alphabet'}, //设置标题
+	width : 800, //图表宽度
+	height : 400, //图表高度
+	coordinate:{ //设置坐标系
+	scale:[{
+	position:'left', //左边值轴
+	start_scale:0, //起始刻度值
+	end_scale:26, //结束刻度值
+	scale_space:2, //刻度值间距
+	listeners:{
+	parseText:function(t,x,y){
+	return {text:t+" CM"}//个性化值轴
+	}
+	}
+	}]
+	}
+	}).draw();//调用draw方法进行绘图
+	});
+</script>
+</head>
+<body>
+<div id="canvasDiv"></div>
+</body>
+</html>

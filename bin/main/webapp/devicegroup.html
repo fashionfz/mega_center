@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Client Side Pagination in DataGrid - jQuery EasyUI Demo</title>
+    <link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="demo.css">
+    <link rel="stylesheet" type="text/css" href="css/button.css">
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/devicegroup.js"></script>
+    <script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+</head>
+<body onload="getGroup()">
+        <table id="dg" singleSelect="true"  nowrap="false" fitColumns="true" title="设备组管理" data-options="
+                    rownumbers:true,
+                    singleSelect:true,
+                    autoRowHeight:false,
+                    pagination:true,
+                    pageSize:10,
+                    toolbar:toolbar">
+        </table>
+        
+        
+        <!-- 弹出框 -->
+    <div id="w" class="easyui-window" title="新增设备组" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:370px;height:140px;padding:10px;">
+        <form id="frmGroup" method="post">
+            <table>
+                <tr>
+                    <td></td>
+                    <td><input class="easyui-validatebox" type="hidden" name="id" data-options="required:false" style="width:270px;"></input></td>
+                </tr>            
+                <tr>
+                    <td>名称:</td>
+                    <td><input class="easyui-validatebox" type="text" name="name" data-options="required:true" style="width:270px;"></input></td>
+                </tr>                             
+                <tr>
+                    <td>状态:</td>
+                    <td>
+                    <select class="easyui-combobox" name="status" style="width:273px;">
+                        <option value="1">启用</option>
+                        <option value="0">停用</option>
+                    </select>  
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><a href="#" onclick="addGroup()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+                    <a href="#" class="easyui-linkbutton" onclick="closeW()" data-options="iconCls:'icon-cancel'">关闭</a></td>
+                </tr>                  
+            </table>
+        </form>
+    </div>      
+    
+    
+    
+        <!-- 授权弹出框 -->
+    <div id="w2" class="easyui-window" title="设备列表" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:823px;height:420px;padding:0px;">
+        <table width="100%" border="0px" height="100%">
+            <tr>
+	            <td width="800px">
+	                <table id="dg22" class="easyui-datagrid" title="设备列表" style="height:300px"
+	                data-options="toolbar:toolbar2,rownumbers:true,singleSelect:false,url:'',method:'get'">
+	                    <thead>
+	                        <tr>
+	                            <th data-options="field:'ck',checkbox:true"></th>
+	                            <th data-options="field:'id',width:75">设备ID</th>
+	                            <th data-options="field:'vicName',width:100">设备名称</th>
+	                            <th data-options="field:'recordType',width:100">检查存储 </th>
+	                        </tr>
+	                    </thead>
+	                </table> 
+	            </td>
+            </tr>
+            <tr><td></td></tr>
+            <tr>
+                <td colspan="2" align="center">
+                <a href="#" class="easyui-linkbutton" onclick="closeW2()" data-options="iconCls:'icon-cancel'">关闭</a></td>
+            </tr>             
+        </table>
+    </div>
+    
+        
+        
+        
+        <!-- 授权弹出框 -->
+    <div id="w3" class="easyui-window" title="添加设备" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:923px;height:400px;padding:0px;">
+        <table width="100%" border="0px" height="100%">
+            <tr>
+                <td width="900px">
+                    <table id="dg33" class="easyui-datagrid" title="设备列表" style="height:300px"
+                    data-options="rownumbers:true,singleSelect:false,url:'',method:'get'">
+                        <thead>
+                            <tr>
+                                <th data-options="field:'ck',checkbox:true"></th>
+                                <th data-options="field:'id',width:75">设备ID</th>
+                                <th data-options="field:'vicName',width:100">设备名称</th>
+                                <th data-options="field:'dvrName',width:100">DVR名称</th>
+                                <th data-options="field:'dvrIp',width:100">DVR ip</th>
+                                <th data-options="field:'dvrUserName',width:100">DVR用户名</th>
+                                <th data-options="field:'dvrPassword',width:100">DVR密码</th>
+                                <th data-options="field:'location',width:100">类型</th>
+                            </tr>
+                        </thead>
+                    </table> 
+                </td>
+            </tr>
+            <tr><td></td></tr>
+            <tr>
+                <td colspan="2" align="center"><a href="#" onclick="addDevice()" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存</a>&nbsp;&nbsp;
+                <a href="#" class="easyui-linkbutton" onclick="closeW3()" data-options="iconCls:'icon-cancel'">关闭</a></td>
+            </tr>             
+        </table>
+    </div>
+    
+    
+    
+            
+    
+    <script>
+    
+    var toolbar = [{
+        text:'添加',
+        iconCls:'icon-add',
+        handler:function(){
+            $('#w').window('open');
+            $('#frmGroup').form('load',{
+                id:null,
+                name:"",
+                status:1
+            });
+            
+        }
+    }];
+    
+    
+    var toolbar2 = [{
+        text:'添加',
+        iconCls:'icon-add',
+        handler:function(){
+       	   $.ajaxSetup({cache:false});
+       	   
+       	 var row = $('#dg').datagrid("getSelected");
+         var id = row['id'];
+       	    $('#dg33').datagrid({
+       	        url:"queryUnGroup.do?groupId="+id,
+       	        pagination:true,
+                height:320,
+                pageSize:9,
+                pageList:[9],
+                loadMsg:'数据装载中......',
+       	        columns:[[
+       	            {field:'ck',checkbox:true},   
+       	            {field:'id',title:'设备ID',width:50,hidden:true},
+       	            {field:'vicName',title:'设备名称',width:100},
+       	            {field:'dvrName',title:'DVR名称',width:100},
+       	            {field:'dvrIp',title:'DVR ip',width:100},
+       	            {field:'dvrUserName',title:'DVR用户名',width:100},
+       	            {field:'dvrPassword',title:'DVR密码',width:100},
+       	            {field:'location',title:'类型',width:100},
+       	            {field:'recordCycle',title:'存储周期',width:100}
+       	        ]]
+       	    });
+            $('#w3').window('open');
+        }
+    },{
+        text:'删除',
+        iconCls:'icon-remove',
+        handler:function(){
+            var row = $('#dg').datagrid("getSelected");
+            var groupId = row['id'];
+            var devices = $('#dg22').datagrid("getSelections");
+            var deviceIds="";
+            for(var i=0;i<devices.length;i++){
+                deviceIds=deviceIds+devices[i]['vicId']+":";
+            }
+            $.post("delGroupDevice.do",{groupId:groupId,deviceIds:deviceIds},function (data, textStatus){     
+            	alert("删除成功！");
+            	scanGroup(groupId,row['name']);
+             });
+        	
+        }
+    }];
+    
+        
+        function pagerFilter(data){
+            if (typeof data.length == 'number' && typeof data.splice == 'function'){    // is array
+                data = {
+                    total: data.length,
+                    rows: data
+                }
+            }
+            var dg = $(this);
+            var opts = dg.datagrid('options');
+            var pager = dg.datagrid('getPager');
+            pager.pagination({
+                onSelectPage:function(pageNum, pageSize){
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh',{
+                        pageNumber:pageNum,
+                        pageSize:pageSize
+                    });
+                    dg.datagrid('loadData',data);
+                }
+            });
+            if (!data.originalRows){
+                data.originalRows = (data.rows);
+            }
+            var start = (opts.pageNumber-1)*parseInt(opts.pageSize);
+            var end = start + parseInt(opts.pageSize);
+            data.rows = (data.originalRows.slice(start, end));
+            return data;
+        }
+        
+    </script>
+</body>
+</html>

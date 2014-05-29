@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:mvc="http://www.springframework.org/schema/mvc"  
+    	xmlns:aop="http://www.springframework.org/schema/aop" 
+    xsi:schemaLocation="   
+           http://www.springframework.org/schema/beans   
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+           http://www.springframework.org/schema/context   
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/mvc   
+           http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+           
+           
+    <!--  主要作用于@Controller，激活该模式
+        
+    	下面是一种简写形式，完全可以手动配置替代这种简写形式；
+    	 它会自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 两个bean,
+    	   是spring MVC为@Controllers分发请求所必须的
+     -->
+     <context:component-scan base-package="com.controller"/>
+
+     <aop:aspectj-autoproxy/>  
+    <mvc:annotation-driven/>
+    
+    
+     <bean
+        class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"
+        p:ignoreDefaultModelOnRedirect="true">
+        <property name="messageConverters">
+            <list>
+                <bean
+                    class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+            </list>
+        </property>      
+    </bean>
+    
+    
+    <!-- 这里拦截器还有一种配置方法【针对路径进行配置】 推荐使用这个，方便直观-->
+    <mvc:interceptors>
+    	<mvc:interceptor>
+    		<mvc:mapping path="/demo/"/>
+    		<mvc:mapping path="/usermanager/*"/>
+			<bean  class="com.core.interceptor.MyInterceptor"></bean>
+    	</mvc:interceptor>
+    </mvc:interceptors>
+    
+     <!-- 全局配置 
+    <mvc:interceptors>
+    	<bean class="com.aokunsang.web.interceptor.MyInterceptor"></bean>
+    </mvc:interceptors>
+    -->
+    <!-- 配置js，css等静态文件直接映射到对应的文件夹，不被DispatcherServlet处理 -->
+    <mvc:resources location="/WEB-INF/resources/**" mapping="/resources"/>
+    
+    <!-- jsp页面解析器，当Controller返回XXX字符串时，先通过拦截器，然后该类就会在/WEB-INF/views/目录下，查找XXX.jsp文件-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    	<property name="prefix" value="/"></property>
+    	<property name="suffix" value=".html"></property>
+    </bean>
+    
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+      <property name="maxUploadSize" value="104857600"/>  
+        <property name="maxInMemorySize" value="4096"/>  
+   </bean> 
+</beans>

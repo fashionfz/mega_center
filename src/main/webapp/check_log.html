@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>检测报告</title>
+    <link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="demo.css">
+        <link rel="stylesheet" type="text/css" href="css/button.css">
+    
+    <style type="text/css">
+    .myDiv {   
+    background:#FFFEE6;
+}
+
+.td1{ 
+    background-color:Silver;
+    border: 1px solid #C1DAD7;   
+    padding: 0px 0px 0px 0px;
+}    
+
+.mytable {   
+    padding: 0;
+    margin: 0;   
+    border-collapse:collapse;
+    text-align:center;
+}
+
+.mytable2 {   
+    padding: 0;
+    margin: 0;   
+    border-collapse:collapse;
+    cursor:crosshair;
+}
+
+.td2 {
+    border: 1px solid #C1DAD7;   
+    background: #fff;
+    padding: 0px 0px 0px 0px;
+}
+
+</style>
+        <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/device.js"></script>
+    <script type="text/javascript" src="locale/easyui-lang-zh_CN.js"></script>
+
+        
+    <script type="text/javascript">
+    var rows = [];
+    var datagridId = 'dg';  
+    
+    $.fn.extend({  
+        /** 
+         * 修改DataGrid对象的默认大小，以适应页面宽度。 
+         *  
+         * @param heightMargin 
+         *            高度对页内边距的距离。 
+         * @param widthMargin 
+         *            宽度对页内边距的距离。 
+         * @param minHeight 
+         *            最小高度。 
+         * @param minWidth 
+         *            最小宽度。 
+         *  
+         */  
+        resizeDataGrid : function(heightMargin, widthMargin, minHeight, minWidth) {  
+            var height = $(document.body).height() - heightMargin;  
+            var width = $(document.body).width() - widthMargin;  
+      
+            height = 380;//height < minHeight ? minHeight : height;  
+            width = width < minWidth ? minWidth : width;  
+            $(this).datagrid('resize', {  
+                height : height,  
+                width : width  
+            });  
+        }  
+    });
+    
+    function init(){
+        
+        $.getJSON("queryCheckReport.do", function(data){
+            $.each(data, function(i,item){
+                rows.push({
+                    inv: item.id,
+                    vicName: item.vicName,
+                    visName: item.dvrName,
+                    visIp: item.dvrIp,
+                    userName: item.dvrUserName,
+                    password: item.dvrPassword,
+                    type: item.location,
+                    cyle: item.recordCycle,
+                    opter: "<div class=\"buttons\"><button class='positive' onclick='detail("+item.id+",\""+item.vicName+"\");'><img height='10px' src=\"images/apply2.png\" alt=\"\"/>查看</button></div>"
+                });
+            });
+            $('#dg').datagrid({loadFilter:pagerFilter}).datagrid('loadData', rows);
+            $('#' + datagridId).resizeDataGrid(20, 110, 100, 100);  
+          });
+        // 第一次加载时自动变化大小  
+        
+      
+        // 当窗口大小发生变化时，调整DataGrid的大小  
+        $(window).resize(function() {  
+            $('#' + datagridId).resizeDataGrid(20, 0, 100, 100);  
+        }); 
+        
+    }
+    </script>    
+    
+    
+    <script>
+        
+        function pagerFilter(data){
+            if (typeof data.length == 'number' && typeof data.splice == 'function'){    // is array
+                data = {
+                    total: data.length,
+                    rows: data
+                }
+            }
+            var dg = $(this);
+            var opts = dg.datagrid('options');
+            var pager = dg.datagrid('getPager');
+            pager.pagination({
+                onSelectPage:function(pageNum, pageSize){
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh',{
+                        pageNumber:pageNum,
+                        pageSize:pageSize
+                    });
+                    dg.datagrid('loadData',data);
+                }
+            });
+            if (!data.originalRows){
+                data.originalRows = (data.rows);
+            }
+            var start = (opts.pageNumber-1)*parseInt(opts.pageSize);
+            var end = start + parseInt(opts.pageSize);
+            data.rows = (data.originalRows.slice(start, end));
+            return data;
+        }
+        
+        function detail(id,name){
+            $.ajaxSetup({cache:false});
+            $('#w').window({title:"("+name+")设备检测详情"});
+            $('#dg22').datagrid({
+                url:"queryCheckLog.do?testId="+id,
+                columns:[[
+                    {field:'id',title:'名称',width:100},
+                    {field:'vicName',title:'dvr ip',width:100},
+                    {field:'recordType',title:'周期',width:100},
+                    {field:'recordType',title:'存储错误的',width:200},
+                    {field:'recordType',title:'状态详情',width:100},
+                    {field:'recordType',title:'处理意见',width:200}
+                    
+                ]]
+            });
+        	$('#w').window('open');
+        }
+        
+        function closeW(){
+            $('#w').window('close');
+        }
+        
+    </script>        
+</head>
+<body onload="init()" onmouseup="end()">
+    <div class="easyui-panel" title="查询条件" style="overflow:auto;padding:0px">
+        <div style="padding:10px 0 10px 60px;text-align:center">
+        <form id="ff" method="post">
+            <table style="width:95%">
+                <tr>
+                    <td style="width:10%">检测时间:</td>
+                    <td style="width:40%"><input class="easyui-validatebox" type="text" name="name" style="width:100%"></input></td>
+                    <td style="width:10%">摄像头名称:</td>
+                    <td style="width:40%"><input class="easyui-validatebox" type="text" name="email" style="width:100%"></input></td>                    
+                </tr>
+                <tr>
+                    <td>DVR名称:</td>
+                    <td><input class="easyui-validatebox" type="text" name="subject" style="width:100%"></input></td>
+                    <td>DVR-IP:</td>
+                    <td><input class="easyui-validatebox" type="text" name="subject" style="width:100%"></input></td>                   
+                </tr>
+                <tr>
+                    <td>类型:</td>
+                    <td><input class="easyui-validatebox" type="text" name="subject" style="width:100%"></input></td>
+                    <td></td>
+                    <td></td>                   
+                </tr>                
+            </table>
+        </form>
+        </div>
+        <div style="text-align:center;padding:5px">
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="submitForm()">查  询</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo'" onclick="execlLoad()">导出</a>
+        </div>
+    </div>
+    
+
+        <div title="检测日志" data-options="iconCls:'icon-ok'" style="overflow:auto;padding:0px">
+            <table id="dg" singleSelect="true"  nowrap="false" fitColumns="true" title="检测日志" data-options="
+                        rownumbers:true,
+                        singleSelect:true,
+                        autoRowHeight:false,
+                        pagination:true,
+                        pageSize:10,
+                        toolbar:null">
+                <thead>
+                    <tr>
+                        <th field="inv" width="10%">编号</th>
+                        <th field="vicName" width="10%">摄像头名称</th>
+                        <th field="visName" width="10%">DVR名称</th>
+                        <th field="visIp" width="10%" align="right">DVR-ip</th>
+                        <th field="userName" width="10%" align="right">DVR用户名</th>
+                        <th field="password" width="10%" align="right">DVR密码</th>
+                        <th field="type" width="10%">类型</th>
+                        <th field="cyle" width="10%">录像周期</th>
+                        <th field="opter" width="8%" align="center">操作</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>  
+        
+        
+
+        <!-- 授权弹出框 -->
+    <div id="w" class="easyui-window" title="设备列表" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:823px;height:390px;padding:0px;">
+        <table width="100%" border="0px" height="100%">
+            <tr>
+                <td width="800px">
+                    <table id="dg22" class="easyui-datagrid" title="设备列表" style="height:300px"
+                    data-options="rownumbers:true,singleSelect:false,url:'',method:'get'">
+                        <thead>
+                            <tr>
+                                <th data-options="field:'id',width:100">名称</th>
+                                <th data-options="field:'vicName',width:100">dvr ip</th>
+                                <th data-options="field:'recordType',width:100">周期</th>
+                                <th data-options="field:'recordType',width:200">存储错误的</th>
+                                <th data-options="field:'recordType',width:100">状态详情</th>
+                                <th data-options="field:'recordType',width:200">处理意见</th>
+                            </tr>
+                        </thead>
+                    </table> 
+                </td>
+            </tr>
+            <tr><td></td></tr>
+            <tr>
+                <td colspan="2" align="center"><a href="#" class="easyui-linkbutton" onclick="closeW()" data-options="iconCls:'icon-cancel'">关闭</a></td>
+            </tr>             
+        </table>
+    </div>
+
+
+   
+    
+    
+    <!-- 进度条 -->
+    <div id="w3" class="easyui-window" title="正在加载" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:450px;height:20px;padding:10px;">
+        <div id="p" class="easyui-progressbar" style="width:400px;"></div>
+    </div>    
+    
+                
+</body>
+</html>

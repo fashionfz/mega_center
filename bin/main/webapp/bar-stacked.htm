@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highcharts Example by http://www.codefans.net</title>
+		
+		
+		<!-- 1. Add these JavaScript inclusions in the head of your page -->
+		<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="js/highcharts.js"></script>
+		
+		<!-- 1a) Optional: the exporting module -->
+		<script type="text/javascript" src="js/modules/exporting.js"></script>
+		
+		
+		<!-- 2. Add the JavaScript to initialize the chart on document ready -->
+		<script type="text/javascript">
+		
+			var chart;
+			$(document).ready(function() {
+				chart = new Highcharts.Chart({
+					chart: {
+						renderTo: 'container',
+						defaultSeriesType: 'bar'
+					},
+					title: {
+						text: '视频检测报告'
+					},
+					xAxis: {
+						min: 0,
+						categories: ['错误比']
+					},
+					yAxis: {
+						min: 0,
+						title: {
+							text: '数量'
+						}
+					},
+					legend: {
+						backgroundColor: '#FFFFFF',
+						reversed: true
+					},
+					tooltip: {
+						formatter: function() {
+							return ''+
+								 this.series.name +': '+ this.y +'';
+						}
+					},
+					plotOptions: {
+						series: {
+							stacking: 'normal',
+							pointWidth: 30
+						}
+					},
+				    series: [{
+						name: '错误',
+						data: [2],
+						color:'red'
+					},{
+                        name: '正常',
+                        data: [10],
+                        color:'green'
+                    }, {
+                        name: '错误',
+                        data: [2],
+                        color:'red'
+                    }]
+				});
+				
+			});
+			
+				
+		</script>
+		
+	</head>
+	<body>
+		
+		<!-- 3. Add the container -->
+		<div id="container" style="width: 800px; height: 200px; margin: 0 auto"></div>
+		
+				
+	</body>
+</html>
